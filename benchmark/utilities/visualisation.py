@@ -88,14 +88,16 @@ def draw_landmarks_origin_target_warped(ax, points_origin, points_target,
 
     >>> points = np.array([[20, 30], [40, 10], [15, 25]])
     >>> draw_landmarks_origin_target_warped(plt.figure().gca(),
-    ...                                    points, points + 1, points - 1)
+    ...                                     points, points + 1, points - 1)
     """
-    assert points_target.shape == points_origin.shape, \
-        'image dimension has to match %r != %r' \
-        % (points_target.shape, points_origin.shape)
-    assert points_origin.shape == points_warped.shape, \
-        'image dimension has to match %r != %r' \
-        % (points_origin.shape, points_warped.shape)
+    pts_sizes = [len(pts) for pts in [points_origin, points_target, points_warped]
+                 if pts is not None]
+    assert pts_sizes, 'no landmarks points given'
+    min_pts = min(pts_sizes)
+    assert min(pts_sizes) > 0, 'no points given for sizes: %r' % pts_sizes
+    points_origin = points_origin[:min_pts]
+    points_target = points_target[:min_pts]
+
     ax.plot(points_origin[:, 0], points_origin[:, 1], marker, color='b',
             label='Original positions')
     # draw a dotted line between origin and where it should be
@@ -104,7 +106,9 @@ def draw_landmarks_origin_target_warped(ax, points_origin, points_target,
         ax.plot(x, y, '-.', color='b', linewidth=2)
     ax.plot(points_target[:, 0], points_target[:, 1], marker, color='m',
             label='Target positions')
+
     if points_warped is not None:
+        points_warped = points_warped[:min_pts]
         # draw line that  should be minimal between target and estimate
         for start, stop in zip(points_target, points_warped):
             x, y = zip(start, stop)
