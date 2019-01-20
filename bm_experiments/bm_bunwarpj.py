@@ -351,18 +351,19 @@ class BmBUnwarpJ(bm.ImRegBenchmark):
         path_macro = os.path.join(path_dir, NAME_MACRO_WARP_IMAGE)
         cmd = '%s -batch %s' % (self.params['path_fiji'], path_macro)
         tl_expt.run_command_line(cmd, path_logger=path_log)
+
         name_img = os.path.basename(record[bm.COL_IMAGE_MOVE])
         path_img = os.path.join(path_dir, name_img)
         # convert the transform do obtain displacement field
         path_macro = os.path.join(path_dir, NAME_MACRO_CONVERT_TRANS)
         cmd = '%s -batch %s' % (self.params['path_fiji'], path_macro)
         tl_expt.run_command_line(cmd, path_logger=path_log)
+
         # load and parse raw transform to detect landmarks
         path_raw = os.path.join(path_dir, NAME_TXT_TRANSFORM_RAW)
         # points_ref = tl_io.load_landmarks(record[bm.COL_POINTS_REF])
         points_move = tl_io.load_landmarks(path_lnds_move)
-        points_warp = load_parse_bunwarpj_displacements_warp_points(path_raw,
-                                                                    points_move)
+        points_warp = load_parse_bunwarpj_displacements_warp_points(path_raw, points_move)
         if points_warp is None:
             path_lnd = None
         else:
